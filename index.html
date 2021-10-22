@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+
+    <title>Atlanta Urban Geographies</title>
+    
+    <!-- add leaflet css stylesheet-->
+    <link 
+        rel="stylesheet" 
+        href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" 
+    />
+
+    <style>
+        /* CSS rules here */
+        
+        /*overide default leaflet tooltip css */
+        .tooltip {
+            color: white;
+            background: #295b97;
+            border: 0;
+            font-size: 1.3em;
+        }
+        
+        /* Add custom map style */
+        /* select both the body and the map */
+        body,
+        #map {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+            margin: 0;
+            padding: 0;
+            background: rgba(0, 0, 0, 0.75);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HTML tag to hold map -->
+    <div id="map"></div>
+
+    <!-- Add leaflet js -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <!-- Add jquery to laod json files -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" 
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"
+    ></script>
+
+    <script>
+        // JavaScript goes here
+        
+        //map options
+        const options = {
+         center: [33.726, -84.365],
+         zoom: 9,
+         minZoom: 9,
+         maxZoom: 16,
+         maxBounds: [
+             [33.911, -84.032],
+             [33.62, -84.7720],
+            ],
+        };
+
+        
+        // create Leaflet map and apply options
+        const map = L.map('map', options);
+
+        
+        // OpenStreetMap option if not building own basemap
+        //const tiles = 
+        // L.tileLayer(
+
+        //     'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', 
+        //     {
+	    //         attribution: 
+        //         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	    //         subdomains: 'abcd',
+	    //         maxZoom: 19 
+        //     }
+        // ).addTo(map);
+
+        //add to base map JSON of interest 
+        $.when(
+            $.getJSON('data/atlanta_urban2.json'), //did the selection of atlanta not work? not seeing any features on the json
+            $.getJSON('data/atlanta_neighborhoods_filtered.json'),
+            $.getJSON('data/atlanta_transit_routes_ms.json')
+        ).done(function (urbanAreasData, neighborhoodsData, transitRoutesData) {
+            drawMap(urbanAreasData, neighborhoodsData,transitRoutesData);
+        });
+        
+        function drawMap(urbanAreasData, neighborhoodsData, transitRoutesData) {
+                   
+            console.log(urbanAreasData)
+            //console.log(neighborhoodsData)
+            console.log(transitRoutesData)
+
+            const urbanOptions = {
+            color: '#295b97', //supposed to be medium blue (gray)
+            weight: 0,
+            opacity: 1,
+            };
+
+            const neighborhoodOptions = {
+            fillOpacity: 0.3,
+            fillColor: '#e0ecf9', //opaque blue gray
+            color: '#151f2b', //dark navy blue shows line color
+            weight: 1.7,
+            opacity: 1,
+            };
+
+            const subwayOptions = {
+            color: '#ff6e00', //orange
+            weight: 2,
+            opacity: 1,
+            };
+
+            const busOptions = {
+            color: '#f0f062', //yellow
+            weight: 0.1,
+            opacity: 1,
+            };
+
+            const tramOptions = {
+            color: '#ff6e00', //orange
+            weight: 2,
+            };
+
+            const otherRoutes = {
+            color: '#ff6e00', //orange
+            };
+
+        //Leaflet Layer for Urban Areas    
+         L.geoJson(urbanAreasData, {
+            style: urbanOptions,
+         }).addTo(map);
+
+        //Leaflet Layer for Neighborhoods
+         L.geoJson(neighborhoodsData, {
+            style:neighborhoodOptions,
+            onEachFeature: function (feature, layer) {
+                //shortcut to variable
+                let tooltip = feature.properties.NEIGHBORHO;
+                //bind the tooltip to the layer
+                layer.bindTooltip(tooltip, {
+                    sticky: true,
+                    className: 'tooltip'
+                });
+                //visual affordance on mouseover
+                layer.on('mouseover', function (e) {
+                    this.setStyle({
+                        fillOpacity: 0.1,
+                    });
+                });
+                //use existing option to reset the styles on mouseout
+                layer.on('mouseout', function (e) {
+                    this.setStyle(neighborhoodOptions);
+                });
+            },
+         }).addTo(map);
+ 
+            
+        //Leaflet Layer for Transit Routes
+         L.geoJson(transitRoutesData, {
+            //style each feature
+             style:function(feature) {
+                //shortcut to variable
+                 let type = feature.properties.rte_type;
+
+                 //assign options
+                 return type === 'subway, metro'
+                 ? subwayOptions
+                 : type === 'bus'
+                 ? busOptions
+                 : type === 'tram, light rail, streetcar'
+                 ? tramOptions
+                 : otherRoutes;
+             },
+         }).addTo(map);
+    }
+
+    //leaflet    
+    map.createPane('labels');
+    map.getPane('labels').style.zIndex = 650;
+    map.getPane('labels').style.pointerEvents = 'none';
+
+    L.tileLayer(
+      'http://global.ssl.fastly.net/rastertiles/dark_only_labels/{z}/{x}/{y}.png',
+      {
+        attribution: '©OpenStreetMap, ©CartoDB',
+        pane: 'labels',
+      }
+    ).addTo(map);
+
+    </script>
+  </body>
+</html>
