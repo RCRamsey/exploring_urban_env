@@ -53,4 +53,18 @@ Repeated same projection change procedure for census urban areas. Commands utili
 **ogr2ogr wa_bridge_tunnel_4326.shp -t_srs "EPSG:4326" wa_bridge_tunnel.shp**
 **ogrinfo -so cb_2018_us_ua10_500k_4326.shp cb_2018_us_ua10_500k_4326**
 
+Converted Washington Bridges/Tunnels and Urban Areas Shapefiles to GeoJSON. Commands utilized:
+**ogr2ogr -f "GeoJSON" ../urban_areas.json cb_2018_us_ua10_500k_4326.shp**
+**ogr2ogr -f "GeoJSON" ../../wa_bridge.json wa_bridge_tunnel_4326.shp**
+
+Reduce file size of urban areas (currently 24.78 MB ) by only pulling to geoJSON Seattle Urban areas. Command utilized:
+**ogr2ogr -f "GeoJSON" -where "NAME10='Seattle, WA'" seattle_urban.json urban_areas.json**
+**dir**
+dir command demonstrated current size of json now 85 KB
+
+Reduce file size of wa_bridge.json (which actually still had bridges and tunnels currently 19.45 MB) by only pulling to geoJSON King County Bridges/tunnels. Command utilized: 
+**ogr2ogr -f "GeoJSON" -where "CountyName='King County'" king_cnty_bridge_tunnels.json wa_bridge.json** 
+**dir**
+dir command demonstrated current size of json now 3.25 MB
+
 
