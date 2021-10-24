@@ -72,22 +72,22 @@
 
         
        // OpenStreetMap option if not building own basemap
-        const tiles = 
-        L.tileLayer(
+        // const tiles = 
+        // L.tileLayer(
 
-            'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', 
-            {
-	            attribution: 
-                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-	            subdomains: 'abcd',
-	            maxZoom: 19 
-            }
-        ).addTo(map);
+        //     'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', 
+        //     {
+	    //         attribution: 
+        //         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	    //         subdomains: 'abcd',
+	    //         maxZoom: 19 
+        //     }
+        // ).addTo(map);
 
         //add to base map JSON of interest 
         $.when(
             $.getJSON('data/seattle_urban.json'),
-           // $.getJSON('data/king_cnty_bridge_and_tunnels.json')
+            $.getJSON('data/king_cnty_bridge_and_tunnels.json')
         ).done(function (urbanAreasData, bridgeTunnelData) {
             drawMap(urbanAreasData, bridgeTunnelData);
         });
@@ -95,7 +95,7 @@
         function drawMap(urbanAreasData, bridgeTunnelData) {
                    
             console.log(urbanAreasData)
-            //console.log(bridgeTunnelData)
+            console.log(bridgeTunnelData)
 
             const urbanOptions = {
             color: '#295b97', //medium blue (gray)
@@ -124,37 +124,37 @@
             style: urbanOptions,
          }).addTo(map); 
             
-        // //Leaflet Layer for Bridge & Tunnel
-        //  L.geoJson(bridgeTunnelData, {
-        //     //style each feature
-        //      style:function(feature) {
-        //         //shortcut to variable
-        //          let type = feature.properties.rte_type;
+        //Leaflet Layer for Bridge & Tunnel
+         L.geoJson(bridgeTunnelData, {
+            //style each feature
+             style:function(feature) {
+                //shortcut to variable
+                 let type = feature.properties.rte_type;
 
-        //          //assign options
-        //          return type === 'subway, metro'
-        //          ? subwayOptions
-        //          : type === 'bus'
-        //          ? busOptions
-        //          : type === 'tram, light rail, streetcar'
-        //          ? tramOptions
-        //          : otherOptions;
-        //      },
-        //  }).addTo(map);
+                 //assign options
+                 return type === 'subway, metro'
+                 ? subwayOptions
+                 : type === 'bus'
+                 ? busOptions
+                 : type === 'tram, light rail, streetcar'
+                 ? tramOptions
+                 : otherOptions;
+             },
+         }).addTo(map);
     }
 
-    // //leaflet    
+    //leaflet    
     // map.createPane('labels');
     // map.getPane('labels').style.zIndex = 650;
     // map.getPane('labels').style.pointerEvents = 'none';
 
-    // L.tileLayer(
-    //   'http://global.ssl.fastly.net/rastertiles/dark_only_labels/{z}/{x}/{y}.png',
-    //   {
-    //     attribution: '©OpenStreetMap, ©CartoDB',
-    //     pane: 'labels',
-    //   }
-    // ).addTo(map);
+    L.tileLayer(
+      'http://global.ssl.fastly.net/rastertiles/dark_only_labels/{z}/{x}/{y}.png',
+      {
+        attribution: '©OpenStreetMap, ©CartoDB',
+        pane: 'labels',
+      }
+    ).addTo(map);
 
     </script>
   </body>
