@@ -13,6 +13,7 @@ __pycache__
 *.tar
 *.zip
 
+
 # Shapefiles #
 ##############
 *.dbf
@@ -21,3 +22,12 @@ __pycache__
 *.qix
 *.shp
 *.shx
+
+#Washington Portal Extras #
+*.xml
+*.cpg
+*.htm 
+*.gdb
+
+
+
