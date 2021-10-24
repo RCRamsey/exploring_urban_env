@@ -1,0 +1,13 @@
+dir
+cd exploring_urban_env
+dir
+cd data
+dir
+cd wa_state_bridge_and_tunnel
+dir
+ogrinfo -so AllBridgeAndTunnelInventory.htm AllBridgeAndTunnelInventory
+cd..
+dir
+doskey /history
+doskey /h > cmd_history.txt
+-----------------------------------------
