@@ -176,7 +176,10 @@
                 onEachFeature:function(feature, layer) {
                     
                     //shortcut to variable
-                    let tooltip = feature.properties.Owner;
+                    let tooltip = `<b>Owner:</b> ${feature.properties.Owner}<br>
+                                    <b>Structure Name:</b> ${feature.properties.BridgeName}<br>
+                                    <b>City Name:</b> ${feature.properties.CityName}<br>
+                                    <b>County Name:</b> ${feature.properties.CountyName}`;
                     //bind the tooltip to the layer
                     layer.bindTooltip(tooltip, {
                         sticky: true,
