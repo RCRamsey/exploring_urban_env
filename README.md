@@ -72,6 +72,9 @@ Reduce file size of wa_bridge.json (which actually still had bridges and tunnels
 
 dir command demonstrated current size of json now 3.25 MB
 
-Creat new branch to take current working index.html and make points of interest (bridges/tunnels) appear. Command utilized: 
-- **git checkout -b showPoints**
+Create new branch to take current working index.html and make points of interest (bridges/tunnels) appear. Command utilized: 
+- **git checkout -b showPoints**  
+
+Within Index.html set all bridge and tunnel data to the same styling options for initial mark up. Use Leaflet's pointToLayer to return circlemarkers using the styling options given as constant variable earlier in code.
+
 

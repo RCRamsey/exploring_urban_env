@@ -111,16 +111,34 @@
                 opacity: 1,
                 fillOpacity: 0.8
                 };  
+            
+            const stateOptions = {
+                radius: 5,
+                fillColor: "green",
+                color: "green",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+                };  
+            
+            const hwyOptions = {
+                radius: 5,
+                fillColor: "red",
+                color: "red",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+                }; 
 
-            // const tunnelOptions = {
-            // color: '#f0f062', //yellow
-            // weight: 0.1,
-            // opacity: 1,
-            // };
-
-            // const otherOptions = {
-            // color: '#ff6e00', //orange
-            // };
+            const otherOptions = {
+                radius: 5,
+                fillColor: "white",
+                color: "white",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+                }; 
+           
 
         //Leaflet Layer for Urban Areas    
          L.geoJson(urbanAreasData, {
@@ -131,46 +149,28 @@
         L.geoJson(bridgeTunnelData, {
             pointToLayer: function (feature, latlng){
                 //styling option 1 does work with orange circle markers
-                return L.circleMarker(latlng, bridgeTunnelOptions);
-                // //styling option 2
-                // return L.circleMarker(latlng,{
-                //     style:function(feature){
-                //         let type = feature.properties.owner;
-                //         //addign options
-                //         return type === 'Washington State'
-                //         ? stateOptions
-                //         : type === 'City or Municipal Highway Agency'
-                //         ? hwyOptions
-                //         : otherOptions;
-
-                //     } 
-                // })
+               // return L.circleMarker(latlng, bridgeTunnelOptions);
+                //styling option 2
+                return L.circleMarker(latlng, stateOptions, hwyOptions, otherOptions, {
+                    style:function(feature){
+                        //shortcut to variables
+                        let type = feature.properties.owner;
+                        //adding options
+                        return type === 'Washington State'
+                        ? stateOptions
+                        : type === 'City or Municipal Highway Agency'
+                        ? hwyOptions
+                        : otherOptions;
+                    }, 
+                })
             },
         }).addTo(map);
-
-        //Leaflet Layer for Bridge & Tunnel
-        //  L.geoJson(bridgeTunnelData, {
-        //     //style each feature
-        //      style:function(feature) {
-        //         //shortcut to variable
-        //          let type = feature.properties.rte_type;
-
-        //          //assign options
-        //          return type === 'subway, metro'
-        //          ? subwayOptions
-        //          : type === 'bus'
-        //          ? busOptions
-        //          : type === 'tram, light rail, streetcar'
-        //          ? tramOptions
-        //          : otherOptions;
-        //      },
-        //  }).addTo(map);
     }
 
     //leaflet    
-    // map.createPane('labels');
-    // map.getPane('labels').style.zIndex = 650;
-    // map.getPane('labels').style.pointerEvents = 'none';
+    map.createPane('labels');
+    map.getPane('labels').style.zIndex = 650;
+    map.getPane('labels').style.pointerEvents = 'none';
 
     L.tileLayer(
       'http://global.ssl.fastly.net/rastertiles/dark_only_labels/{z}/{x}/{y}.png',
