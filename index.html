@@ -72,17 +72,17 @@
 
         
        // OpenStreetMap option if not building own basemap
-        // const tiles = 
-        // L.tileLayer(
+        const tiles = 
+        L.tileLayer(
 
-        //     'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', 
-        //     {
-	    //         attribution: 
-        //         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-	    //         subdomains: 'abcd',
-	    //         maxZoom: 19 
-        //     }
-        // ).addTo(map);
+            'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', 
+            {
+	            attribution: 
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	            subdomains: 'abcd',
+	            maxZoom: 19 
+            }
+        ).addTo(map);
 
         //add to base map JSON of interest 
         $.when(
@@ -110,7 +110,7 @@
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.8
-                };  
+            };  
             
             const stateOptions = {
                 radius: 5,
@@ -119,66 +119,92 @@
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.8
-                };  
+            };  
             
             const hwyOptions = {
                 radius: 5,
-                fillColor: "red",
-                color: "red",
+                fillColor: "#ff6e00", //orange
+                color: "#ff6e00",
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.8
-                }; 
+            }; 
 
             const otherOptions = {
                 radius: 5,
-                fillColor: "white",
-                color: "white",
+                fillColor: "#f0f062", //yellow
+                color: "#f0f062",
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.8
-                }; 
+            }; 
            
 
-        //Leaflet Layer for Urban Areas    
-         L.geoJson(urbanAreasData, {
-            style: urbanOptions,
-         }).addTo(map); 
+            //Leaflet Layer for Urban Areas    
+            L.geoJson(urbanAreasData, {
+                style: urbanOptions,
+            }).addTo(map); 
 
-        //Leaflet Layer for bridge and tunnel
-        L.geoJson(bridgeTunnelData, {
-            pointToLayer: function (feature, latlng){
+            //Leaflet Layer for bridge and tunnel
+            L.geoJson(bridgeTunnelData, {
+             pointToLayer: function (feature, latlng){
                 //styling option 1 does work with orange circle markers
-               // return L.circleMarker(latlng, bridgeTunnelOptions);
+                // return L.circleMarker(latlng, bridgeTunnelOptions);
                 //styling option 2
+                
                 return L.circleMarker(latlng, stateOptions, hwyOptions, otherOptions, {
                     style:function(feature){
                         //shortcut to variables
                         let type = feature.properties.owner;
+                        
                         //adding options
                         return type === 'Washington State'
                         ? stateOptions
                         : type === 'City or Municipal Highway Agency'
                         ? hwyOptions
                         : otherOptions;
-                    }, 
-                })
-            },
-        }).addTo(map);
-    }
+                    },
+
+                    onEachFeature:function(feature, layer) {
+                    
+                        //shortcut to variable
+                        let tooltip = feature.properties.Owner;
+                        //bind the tooltip to the layer
+                        layer.bindTooltip(tooltip, {
+                            sticky: true,
+                            className: 'tooltip'
+                        });
+                    
+                        //visual affordance on mouseover
+                        layer.on('mouseover', function(e) {
+                            this.setStyle({
+                            fillOpacity:0.1,
+                            });
+                        });
+
+                        //use existing option to reset the styles on mouseout
+                        layer.on('mouseout', function(e) {
+                            this.setStyle(styleOptionsPlaceHolder);
+                        });
+                    }
+                }) 
+              },
+        
+            }).addTo(map);    
+        }
 
     //leaflet    
     map.createPane('labels');
     map.getPane('labels').style.zIndex = 650;
     map.getPane('labels').style.pointerEvents = 'none';
 
-    L.tileLayer(
-      'http://global.ssl.fastly.net/rastertiles/dark_only_labels/{z}/{x}/{y}.png',
-      {
-        attribution: '©OpenStreetMap, ©CartoDB',
-        pane: 'labels',
-      }
-    ).addTo(map);
+    // L.tileLayer(
+    //   //'http://global.ssl.fastly.net/rastertiles/dark_only_labels/{z}/{x}/{y}.png',
+    //   {
+    //     attribution: '©OpenStreetMap, ©CartoDB',
+    //     pane: 'labels',
+    //   }
+    // ).addTo(map);
 
     </script>
   </body>
