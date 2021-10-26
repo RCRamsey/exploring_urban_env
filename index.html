@@ -6,24 +6,20 @@
     <meta charset="utf-8" />
 
     <title>Seattle Urban Bridge Geography</title>
-    
+
     <!-- add leaflet css stylesheet-->
-    <link 
-        rel="stylesheet" 
-        href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" 
-    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
     <style>
         /* CSS rules here */
-        
-        overide default leaflet tooltip css
-        .tooltip {
+
+        overide default leaflet tooltip css .tooltip {
             color: white;
             background: #295b97;
             border: 0;
             font-size: 1.3em;
         }
-        
+
         /* Add custom map style */
         /* select both the body and the map */
         body,
@@ -47,42 +43,40 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
     <!-- Add jquery to laod json files -->
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" 
-        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous"
-    ></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 
     <script>
         // JavaScript goes here
-        
+
         //map options
         const options = {
-         center: [47.5807, -122.05239],
-         zoom: 9,
-         minZoom: 2,
-         maxZoom: 20,
-         maxBounds: [
-             [47.91361, -121.17005], //north east
-             [47.24571, -122.9347], //south west
+            center: [47.5807, -122.05239],
+            zoom: 9,
+            minZoom: 2,
+            maxZoom: 20,
+            maxBounds: [
+                [47.91361, -121.17005], //north east
+                [47.24571, -122.9347], //south west
             ],
         };
-        
+
         // create Leaflet map and apply options
         const map = L.map('map', options);
 
-        
-       // OpenStreetMap option if not building own basemap
-        const tiles = 
-        L.tileLayer(
 
-            'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', 
-            {
-	            attribution: 
-                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-	            subdomains: 'abcd',
-	            maxZoom: 19 
-            }
-        ).addTo(map);
+        // OpenStreetMap option if not building own basemap
+        const tiles =
+            L.tileLayer(
+
+                'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
+                {
+                    attribution:
+                        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                }
+            ).addTo(map);
 
         //add to base map JSON of interest 
         $.when(
@@ -91,16 +85,16 @@
         ).done(function (urbanAreasData, bridgeTunnelData) {
             drawMap(urbanAreasData, bridgeTunnelData);
         });
-        
+
         function drawMap(urbanAreasData, bridgeTunnelData) {
-                   
+
             console.log(urbanAreasData)
             console.log(bridgeTunnelData)
 
             const urbanOptions = {
-            color: '#295b97', //medium blue (gray)
-            weight: 1,
-            opacity: 1,
+                color: '#295b97', //medium blue (gray)
+                weight: 1,
+                opacity: 1,
             };
 
             const bridgeTunnelOptions = {
@@ -110,8 +104,8 @@
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.8
-            };  
-            
+            };
+
             const stateOptions = {
                 radius: 5,
                 fillColor: "green",
@@ -119,8 +113,8 @@
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.8
-            };  
-            
+            };
+
             const hwyOptions = {
                 radius: 5,
                 fillColor: "#ff6e00", //orange
@@ -128,7 +122,7 @@
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.8
-            }; 
+            };
 
             const otherOptions = {
                 radius: 5,
@@ -137,66 +131,71 @@
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.8
-            }; 
-           
+            };
+
 
             //Leaflet Layer for Urban Areas    
             L.geoJson(urbanAreasData, {
                 style: urbanOptions,
-            }).addTo(map); 
+            }).addTo(map);
+
+            // const bridgeStyling = {
+            //     'Washington State': stateOptions,
+            //     'City or Municipal Highway Agency': hwyOptions
+            // }
 
             //Leaflet Layer for bridge and tunnel
             L.geoJson(bridgeTunnelData, {
-             pointToLayer: function (feature, latlng){
-                //styling option 1 does work with orange circle markers
-                // return L.circleMarker(latlng, bridgeTunnelOptions);
-                //styling option 2
-                
-                return L.circleMarker(latlng, stateOptions, hwyOptions, otherOptions, {
-                    style:function(feature){
-                        //shortcut to variables
-                        let type = feature.properties.owner;
-                        
-                        //adding options
-                        return type === 'Washington State'
+
+                pointToLayer: function (feature, latlng) {
+                    //styling option 1 does work with orange circle markers
+                    // return L.circleMarker(latlng, bridgeTunnelOptions);
+                    //styling option 2
+
+                    return L.circleMarker(latlng);
+                },
+                style: function (feature) {
+                    //shortcut to variables
+                    let type = feature.properties.Owner;
+                    // return bridgeStyling[type];
+
+                    // adding options
+                    return type === 'Washington State'
                         ? stateOptions
                         : type === 'City or Municipal Highway Agency'
-                        ? hwyOptions
-                        : otherOptions;
-                    },
+                            ? hwyOptions
+                            : otherOptions;
+                },
 
-                    onEachFeature:function(feature, layer) {
-                    
-                        //shortcut to variable
-                        let tooltip = feature.properties.Owner;
-                        //bind the tooltip to the layer
-                        layer.bindTooltip(tooltip, {
-                            sticky: true,
-                            className: 'tooltip'
-                        });
-                    
-                        //visual affordance on mouseover
-                        layer.on('mouseover', function(e) {
-                            this.setStyle({
-                            fillOpacity:0.1,
-                            });
-                        });
+                onEachFeature: function (feature, layer) {
 
-                        //use existing option to reset the styles on mouseout
-                        layer.on('mouseout', function(e) {
-                            this.setStyle(styleOptionsPlaceHolder);
+                    //shortcut to variable
+                    let tooltip = feature.properties.Owner;
+                    //bind the tooltip to the layer
+                    layer.bindTooltip(tooltip, {
+                        sticky: true,
+                        className: 'tooltip'
+                    });
+
+                    //visual affordance on mouseover
+                    layer.on('mouseover', function (e) {
+                        this.setStyle({
+                            fillOpacity: 0.1,
                         });
-                    }
-                }) 
-              },
-        
-            }).addTo(map);    
+                    });
+
+                    //use existing option to reset the styles on mouseout
+                    layer.on('mouseout', function (e) {
+                        this.setStyle(styleOptionsPlaceHolder);
+                    });
+                }
+            }).addTo(map);
+
         }
-
-    //leaflet    
-    map.createPane('labels');
-    map.getPane('labels').style.zIndex = 650;
-    map.getPane('labels').style.pointerEvents = 'none';
+        //leaflet    
+        map.createPane('labels');
+        map.getPane('labels').style.zIndex = 650;
+        map.getPane('labels').style.pointerEvents = 'none';
 
     // L.tileLayer(
     //   //'http://global.ssl.fastly.net/rastertiles/dark_only_labels/{z}/{x}/{y}.png',
@@ -207,5 +206,6 @@
     // ).addTo(map);
 
     </script>
-  </body>
+</body>
+
 </html>
