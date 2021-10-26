@@ -60,7 +60,7 @@
          center: [47.5807, -122.05239],
          zoom: 9,
          minZoom: 2,
-         maxZoom: 16,
+         maxZoom: 20,
          maxBounds: [
              [47.91361, -121.17005], //north east
              [47.24571, -122.9347], //south west
@@ -87,7 +87,7 @@
         //add to base map JSON of interest 
         $.when(
             $.getJSON('data/seattle_urban.json'),
-            $.getJSON('data/king_cnty_bridge_and_tunnels.json')
+            $.getJSON('data/king_cnty_bridge_tunnels.json')
         ).done(function (urbanAreasData, bridgeTunnelData) {
             drawMap(urbanAreasData, bridgeTunnelData);
         });
@@ -103,11 +103,14 @@
             opacity: 1,
             };
 
-            // const bridgeOptions = {
-            // color: '#ff6e00', //orange
-            // weight: 2,
-            // opacity: 1,
-            // };
+            const bridgeTunnelOptions = {
+                radius: 5,
+                fillColor: "#ff7800",
+                color: "#000",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+                };  
 
             // const tunnelOptions = {
             // color: '#f0f062', //yellow
@@ -123,24 +126,45 @@
          L.geoJson(urbanAreasData, {
             style: urbanOptions,
          }).addTo(map); 
-            
-        //Leaflet Layer for Bridge & Tunnel
-         L.geoJson(bridgeTunnelData, {
-            //style each feature
-             style:function(feature) {
-                //shortcut to variable
-                 let type = feature.properties.rte_type;
 
-                 //assign options
-                 return type === 'subway, metro'
-                 ? subwayOptions
-                 : type === 'bus'
-                 ? busOptions
-                 : type === 'tram, light rail, streetcar'
-                 ? tramOptions
-                 : otherOptions;
-             },
-         }).addTo(map);
+        //Leaflet Layer for bridge and tunnel
+        L.geoJson(bridgeTunnelData, {
+            pointToLayer: function (feature, latlng){
+                //styling option 1 does work with orange circle markers
+                return L.circleMarker(latlng, bridgeTunnelOptions);
+                // //styling option 2
+                // return L.circleMarker(latlng,{
+                //     style:function(feature){
+                //         let type = feature.properties.owner;
+                //         //addign options
+                //         return type === 'Washington State'
+                //         ? stateOptions
+                //         : type === 'City or Municipal Highway Agency'
+                //         ? hwyOptions
+                //         : otherOptions;
+
+                //     } 
+                // })
+            },
+        }).addTo(map);
+
+        //Leaflet Layer for Bridge & Tunnel
+        //  L.geoJson(bridgeTunnelData, {
+        //     //style each feature
+        //      style:function(feature) {
+        //         //shortcut to variable
+        //          let type = feature.properties.rte_type;
+
+        //          //assign options
+        //          return type === 'subway, metro'
+        //          ? subwayOptions
+        //          : type === 'bus'
+        //          ? busOptions
+        //          : type === 'tram, light rail, streetcar'
+        //          ? tramOptions
+        //          : otherOptions;
+        //      },
+        //  }).addTo(map);
     }
 
     //leaflet    
