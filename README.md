@@ -75,6 +75,8 @@ dir command demonstrated current size of json now 3.25 MB
 Create new branch to take current working index.html and make points of interest (bridges/tunnels) appear. Command utilized: 
 - **git checkout -b showPoints**  
 
-Within Index.html set all bridge and tunnel data to the same styling options for initial mark up. Use Leaflet's pointToLayer to return circlemarkers using the styling options given as constant variable earlier in code. 
+Within Index.html set all bridge and tunnel data to the same styling options for initial mark up. Use Leaflet's pointToLayer to return circlemarkers using the styling options given as constant variables earlier in code. 
+
+Am now able to hover over the various Bridges and Tunnels of King County (all listed for entire county) with particular interest in those located within the Seattle Urban Area. Tooltip provides the information necessary to determine who the owner is of each bridge/tunnel and therefore who is responsible for its upkeep.
 
 
